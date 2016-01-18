@@ -3,6 +3,8 @@ name = "maud-pulldown-cmark"
 version = "0.0.1"
 authors = ["Wim Looman <wim@nemo157.com>"]
 
+license = "MIT/Apache-2.0"
+
 [dependencies]
 pulldown-cmark = "0.0.5"
 maud = "0.7.3"
