@@ -22,6 +22,7 @@ test-beta:
     - travis-cargo package --verbose
 
 test-nightly:
+  allow_failure: true
   script:
     - apt-get install -y curl
     - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=nightly
