@@ -3,7 +3,7 @@ image: ubuntu:vivid
 test-stable:
   script:
     - apt-get install -y curl file
-    - curl -sSf https://static.rust-lang.org/rustup.sh | sh
+    - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --disable-sudo
     - grep -v "maud_macros" Cargo.toml > Cargo.toml.new
     - mv Cargo.toml.new Cargo.toml
     - cargo build --release --verbose
@@ -17,7 +17,7 @@ test-stable:
 test-beta:
   script:
     - apt-get install -y curl file
-    - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=beta
+    - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --disable-sudo --channel=beta
     - cargo build --release --verbose
     - cargo test --verbose
 
@@ -25,6 +25,6 @@ test-nightly:
   allow_failure: true
   script:
     - apt-get install -y curl file
-    - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=nightly
+    - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --disable-sudo --channel=nightly
     - cargo build --release --verbose --features nightly
     - cargo test --verbose
