@@ -8,7 +8,7 @@ sudo: false
 matrix:
   fast_finish: true
   allow_failures:
-    - nightly
+    - rust: nightly
 
 env:
   global:
@@ -19,7 +19,7 @@ env:
 
 before_script:
   - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
-  - [[ "$TRAVIS_RUST_VERSION" = "stable" ]] && grep -v 'maud_macros' Cargo.toml > Cargo.toml.new && mv Cargo.toml.new Cargo.toml
+  - sh -c 'if [ "$TRAVIS_RUST_VERSION" = "stable" ]; then grep -v "maud_macros" Cargo.toml > Cargo.toml.new && mv Cargo.toml.new Cargo.toml; fi'
 
 script:
   - travis-cargo build
