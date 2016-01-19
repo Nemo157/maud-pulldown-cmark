@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Escaper","An adapter that escapes HTML special characters."],["PreEscaped","A wrapper that renders the inner value without escaping."],["Utf8Writer","Wraps a `std::io::Write` in a `std::fmt::Write`."]],"trait":[["Render","Represents a type that can be rendered as HTML."]]});
