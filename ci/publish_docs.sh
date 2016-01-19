@@ -8,7 +8,7 @@ CRATE=${2:?'Must provide crate'}
 
 # Setup this repo to publish the docs
 git fetch origin gh-pages
-git checkout -b gh-pages FETCH_HEAD
+git checkout -f -b gh-pages FETCH_HEAD
 
 # Move the built docs into versioned folder
 mv target/doc docs/$TAG
