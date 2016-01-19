@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>maud-pulldown-cmark</title>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-type">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://nemo157.com/css/app.css" type="text/css" media="screen" charset="utf-8"/>
+  </head>
+
+  <body class="dark">
+    <header class="highlight">
+      <h1>maud-pulldown-cmark</h1>
+    </header>
+
+    <div>
+      <section>
+        View on
+        <a href="https://crates.io/crates/maud-pulldown-cmark"><span class="icon cargo"></span>Cargo</a>
+        or
+        <a href="https://github.com/Nemo157/maud-pulldown-cmark"><span class="icon github"></span>GitHub</a>
+      </section>
+
+      <section>
+        <h2>About</h2>
+
+        <p>
+          This library implements an adapter to allow rendering strings as
+          markdown inside a <a href="https://github.com/lfairy/maud">maud</a>
+          macro using <a href="https://github.com/google/pulldown-cmark">pulldown-cmark</a>
+          efficiently.
+        </p>
+      </section>
+
+      <section>
+        <h2>Example</h2>
+
+        <pre><code>
+let markdown = "
+ 1. A list
+ 2. With some
+ 3. Values
+";
+
+let mut buffer = String::new();
+
+html!(buffer, {
+  div {
+    $(Markdown::FromString(markdown))
+  }
+});
+
+printf!("{}", buffer);
+        </code></pre>
+      </section>
+
+      <section>
+        <h2>Docs</h2>
+        <ul>
+          <!-- DOCS INDEX -->
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>
