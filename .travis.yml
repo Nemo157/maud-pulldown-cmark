@@ -19,6 +19,7 @@ env:
 
 before_script:
   - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
+  - [[ "$TRAVIS_RUST_VERSION" = "stable" ]] && grep -v 'maud_macros' Cargo.toml > Cargo.toml.new && mv Cargo.toml.new Cargo.toml
 
 script:
   - travis-cargo build
