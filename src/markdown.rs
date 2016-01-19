@@ -2,10 +2,13 @@
 ///
 /// # Examples
 ///
-/// ```
+#[cfg_attr(feature = "nightly", doc = " ```")]
+#[cfg_attr(not(feature = "nightly"), doc = " ```ignore")]
 /// # #![feature(plugin)]
-/// #![plugin(maud_macros)]
-///
+/// # #![plugin(maud_macros)]
+/// # extern crate maud;
+/// # extern crate maud_pulldown_cmark;
+/// # use maud_pulldown_cmark::Markdown;
 /// # fn main() {
 /// let markdown = "
 ///  1. A list
@@ -19,7 +22,7 @@
 ///   div {
 ///     $(Markdown::FromString(markdown))
 ///   }
-/// });
+/// }).unwrap();
 ///
 /// println!("{}", buffer);
 /// # }
