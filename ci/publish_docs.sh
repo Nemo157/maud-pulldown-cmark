@@ -15,7 +15,7 @@ mv target/doc docs/$TAG
 
 # Update the index to point to the versioned docs
 sed -i'' -e '/<!-- DOCS INDEX -->/a\
-<li><a href="docs/'"$TAG"'/'"$CRATE"'/">'"$TAG"'</a></li>
+<li><a href="docs/'"$TAG"'/'"${CRATE//-/_}"'/">'"$TAG"'</a></li>
 ' index.html
 
 # Add the changes
