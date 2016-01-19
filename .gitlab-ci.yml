@@ -1,0 +1,26 @@
+image: ubuntu:vivid
+
+test-stable:
+  script:
+    - curl -sSf https://static.rust-lang.org/rustup.sh | sh
+    - grep -v "maud_macros" Cargo.toml > Cargo.toml.new
+    - mv Cargo.toml.new Cargo.toml
+    - cargo build --release --verbose
+    - cargo test --verbose
+  artifacts:
+    paths:
+      - target/doc
+      - target/package/maud-pulldown-cmark-*.crate
+
+test-beta:
+  script:
+    - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=beta
+    - travis-cargo build --release --verbose
+    - travis-cargo test --verbose
+    - travis-cargo package --verbose
+
+test-nightly:
+  script:
+    - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- --channel=nightly
+    - travis-cargo build --release --verbose
+    - travis-cargo test --verbose
