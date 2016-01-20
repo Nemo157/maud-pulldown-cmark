@@ -3,6 +3,7 @@ image: ubuntu:vivid
 stages:
   - test
   - publish
+  - sync
 
 test-stable:
   script:
@@ -46,6 +47,9 @@ publish:
       - target/package/*.crate
 
 mirror-to-github:
+  stage: sync
+  allow_failure: true
+  when: always
   script:
     - echo "machine github.com login $GITHUB_TOKEN password x-oauth-basic" >> ~/.netrc
     - chmod 0600 ~/.netrc
