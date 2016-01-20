@@ -19,6 +19,6 @@ nightly = ["maud_macros"]
 
 [dependencies]
 pulldown-cmark = "0.0.5"
-maud = "0.7.3"
+maud = { git = "https://github.com/lfairy/maud" }
 # Should be a dev-dependency, but they're not supported with features
 maud_macros = { git = "https://github.com/lfairy/maud", optional = true }

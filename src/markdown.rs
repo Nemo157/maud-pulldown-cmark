@@ -1,5 +1,10 @@
+use std::fmt;
 use std::marker::PhantomData;
+
+use maud::RenderOnce;
 use pulldown_cmark::{ Parser, Event };
+
+use render;
 
 /// The adapter that allows rendering markdown inside a `maud` macro.
 ///
@@ -11,7 +16,7 @@ use pulldown_cmark::{ Parser, Event };
 /// # #![plugin(maud_macros)]
 /// # extern crate maud;
 /// # extern crate maud_pulldown_cmark;
-/// # use maud_pulldown_cmark::markdown;
+/// # use maud_pulldown_cmark::Markdown;
 /// # fn main() {
 /// let markdown = "
 ///  1. A list
@@ -23,18 +28,13 @@ use pulldown_cmark::{ Parser, Event };
 ///
 /// html!(buffer, {
 ///   div {
-///     $(markdown::from_string(markdown))
+///     ^Markdown::from_string(markdown)
 ///   }
 /// }).unwrap();
 ///
 /// println!("{}", buffer);
 /// # }
 /// ```
-pub struct MarkdownString<'a>(&'a str);
-
-/// The adapter that allows rendering an iterator of markdown events inside a `maud` macro.
-///
-/// # Examples
 ///
 #[cfg_attr(feature = "nightly", doc = " ```")]
 #[cfg_attr(not(feature = "nightly"), doc = " ```ignore")]
@@ -44,7 +44,7 @@ pub struct MarkdownString<'a>(&'a str);
 /// # extern crate pulldown_cmark;
 /// # extern crate maud_pulldown_cmark;
 /// # use pulldown_cmark::{ Parser, Event };
-/// # use maud_pulldown_cmark::markdown;
+/// # use maud_pulldown_cmark::Markdown;
 /// # fn main() {
 /// let markdown = "
 ///  1. A list
@@ -52,7 +52,7 @@ pub struct MarkdownString<'a>(&'a str);
 ///  3. <span>Inline html</span>
 /// ";
 ///
-/// let events = || Parser::new(markdown).map(|ev| match ev {
+/// let events = Parser::new(markdown).map(|ev| match ev {
 ///   // Escape inline html
 ///   Event::Html(html) | Event::InlineHtml(html) => Event::Text(html),
 ///   _ => ev,
@@ -62,37 +62,41 @@ pub struct MarkdownString<'a>(&'a str);
 ///
 /// html!(buffer, {
 ///   div {
-///     $(markdown::from_events(&events))
+///     ^Markdown::from_events(events)
 ///   }
 /// }).unwrap();
 ///
 /// println!("{}", buffer);
 /// # }
 /// ```
-pub struct MarkdownEvents<'a, I: 'a + Iterator<Item=Event<'a>>, F: Fn() -> I>(F, PhantomData<&'a I>);
-
-/// To allow rendering from a string.
-pub fn from_string<'a>(s: &'a str) -> MarkdownString<'a> {
-  MarkdownString(s)
+pub struct Markdown<'a, I: 'a + Iterator<Item=Event<'a>>> {
+  events: I,
+  phantom: PhantomData<&'a I>,
 }
 
-/// To allow rendering from a stream of events (useful for modifying the output of the general parser).
-pub fn from_events<'a, I: 'a + Iterator<Item=Event<'a>>, F: Fn() -> I>(events: F) -> MarkdownEvents<'a, I, F> {
-  MarkdownEvents(events, PhantomData)
-}
-
-impl<'a> MarkdownString<'a> {
-  /// To get a parser wrapping the provided string.
-  pub fn events(&self) -> Parser<'a> {
-    Parser::new(self.0)
+impl<'a> Markdown<'a, Parser<'a>> {
+  /// To allow rendering from a string.
+  pub fn from_string(s: &'a str) -> Markdown<'a, Parser<'a>> {
+    Markdown {
+      events: Parser::new(s),
+      phantom: PhantomData,
+    }
   }
 }
 
-impl<'a, I: 'a + Iterator<Item=Event<'a>>, F: Fn() -> I> MarkdownEvents<'a, I, F> {
-  /// To get a copy of the provided events.
-  pub fn events(&self) -> I {
-    let f = &self.0;
-    f()
+impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
+  /// To allow rendering from a stream of events (useful for modifying the output of the general parser).
+  pub fn from_events(events: I) -> Markdown<'a, I> {
+    Markdown {
+      events: events,
+      phantom: PhantomData,
+    }
+  }
+}
+
+impl<'a, I: 'a + Iterator<Item=Event<'a>>> RenderOnce for Markdown<'a, I> {
+  fn render_once(self, w: &mut fmt::Write) -> fmt::Result {
+    render::render_events(self.events, w)
   }
 }
 
@@ -100,7 +104,8 @@ impl<'a, I: 'a + Iterator<Item=Event<'a>>, F: Fn() -> I> MarkdownEvents<'a, I, F
 mod tests {
   #[test]
   pub fn test_from_string() {
-    use maud::Render;
+    use super::Markdown;
+    use maud::RenderOnce;
 
     let markdown = "
  1. A list
@@ -109,13 +114,14 @@ mod tests {
     ";
 
     let mut buffer = String::new();
-    super::from_string(markdown).render(&mut buffer).unwrap();
+    Markdown::from_string(markdown).render_once(&mut buffer).unwrap();
     assert_eq!(buffer, "<ol>\n<li>A list</li>\n<li>With some</li>\n<li><span>Inline html</span></li>\n</ol>\n");
   }
 
   #[test]
   pub fn test_from_events() {
-    use maud::Render;
+    use super::Markdown;
+    use maud::RenderOnce;
     use pulldown_cmark::{ Parser, Event };
 
     let markdown = "
@@ -124,14 +130,14 @@ mod tests {
  3. <span>Inline html</span>
     ";
 
-    let events = || Parser::new(markdown).map(|ev| match ev {
+    let events = Parser::new(markdown).map(|ev| match ev {
       // Escape inline html
       Event::Html(html) | Event::InlineHtml(html) => Event::Text(html),
       _ => ev,
     });
 
     let mut buffer = String::new();
-    super::from_events(events).render(&mut buffer).unwrap();
+    Markdown::from_events(events).render_once(&mut buffer).unwrap();
     assert_eq!(buffer, "<ol>\n<li>A list</li>\n<li>With some</li>\n<li>&lt;span&gt;Inline html&lt;/span&gt;</li>\n</ol>\n");
   }
 }

@@ -1,32 +1,18 @@
-
 use std::borrow::{ Cow };
 use std::collections::{ HashMap };
 use std::fmt::{ self, Write };
 
-use maud::{ self, Escaper };
+use maud::{ Escaper };
 use pulldown_cmark::{ Event, Tag };
 
 use escape::HrefEscaper;
-use markdown::{ MarkdownString, MarkdownEvents };
 
 struct Context<'a> {
   numbers: HashMap<Cow<'a, str>, usize>,
   within_image: bool,
 }
 
-impl<'a> maud::Render for MarkdownString<'a> {
-  fn render(&self, w: &mut Write) -> fmt::Result {
-    render_events(self.events(), w)
-  }
-}
-
-impl<'a, I: 'a + Iterator<Item=Event<'a>>, F: Fn() -> I> maud::Render for MarkdownEvents<'a, I, F> {
-  fn render(&self, w: &mut Write) -> fmt::Result {
-    render_events(self.events(), w)
-  }
-}
-
-fn render_events<'a, I: Iterator<Item=Event<'a>>>(events: I, mut w: &mut Write) -> fmt::Result {
+pub fn render_events<'a, I: Iterator<Item=Event<'a>>>(events: I, mut w: &mut Write) -> fmt::Result {
   let mut context = Context {
     numbers: HashMap::new(),
     within_image: false,
