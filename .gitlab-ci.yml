@@ -44,3 +44,9 @@ publish:
     paths:
       - target/doc
       - target/package/*.crate
+
+mirror-to-github:
+  script:
+    - echo "machine github.com login $GITHUB_TOKEN password x-oauth-basic" >> ~/.netrc
+    - chmod 0600 ~/.netrc
+    - git push --mirror "https://github.com/$GITHUB_PROJECT"
