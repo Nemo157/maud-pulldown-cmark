@@ -95,7 +95,7 @@ impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
 }
 
 impl<'a, I: 'a + Iterator<Item=Event<'a>>> RenderOnce for Markdown<'a, I> {
-  fn render(self, w: &mut fmt::Write) -> fmt::Result {
+  fn render_once(self, w: &mut fmt::Write) -> fmt::Result {
     render::render_events(self.events, w)
   }
 }
@@ -114,7 +114,7 @@ mod tests {
     ";
 
     let mut buffer = String::new();
-    Markdown::from_string(markdown).render(&mut buffer).unwrap();
+    Markdown::from_string(markdown).render_once(&mut buffer).unwrap();
     assert_eq!(buffer, "<ol>\n<li>A list</li>\n<li>With some</li>\n<li><span>Inline html</span></li>\n</ol>\n");
   }
 
@@ -137,7 +137,7 @@ mod tests {
     });
 
     let mut buffer = String::new();
-    Markdown::from_events(events).render(&mut buffer).unwrap();
+    Markdown::from_events(events).render_once(&mut buffer).unwrap();
     assert_eq!(buffer, "<ol>\n<li>A list</li>\n<li>With some</li>\n<li>&lt;span&gt;Inline html&lt;/span&gt;</li>\n</ol>\n");
   }
 }
