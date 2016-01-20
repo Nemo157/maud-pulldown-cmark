@@ -20,7 +20,31 @@ html!(buffer, {
   }
 });
 
-printf!("{}", buffer);
+println!("{}", buffer);
+```
+
+```rust
+let markdown = "
+ 1. A list
+ 2. With some
+ 3. <span>Inline html</span>
+";
+
+let events = || Parser::new(markdown).map(|ev| match ev {
+  // Escape inline html
+  Event::Html(html) | Event::InlineHtml(html) => Event::Text(html),
+  _ => ev,
+});
+
+let mut buffer = String::new();
+
+html!(buffer, {
+  div {
+    $(markdown::from_events(events))
+  }
+});
+
+println!("{}", buffer);
 ```
 
 ## License
