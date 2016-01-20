@@ -1,4 +1,4 @@
-# maud-pulldown-cmark [![travis-badge][]][travis] [![release-badge][]][cargo] [![docs-badge][]][docs]
+# maud-pulldown-cmark [![release-badge][]][cargo] [![docs-badge][]][docs]
 
 This library implements an adapter to allow rendering strings as markdown inside
 a [maud][] macro using [pulldown-cmark][] efficiently.
@@ -62,8 +62,6 @@ Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you shall be dual licensed as above, without any
 additional terms or conditions.
 
-[travis-badge]: https://img.shields.io/travis/Nemo157/maud-pulldown-cmark.svg?style=flat-square
-[travis]: https://travis-ci.org/Nemo157/maud-pulldown-cmark
 [release-badge]: https://img.shields.io/github/release/Nemo157/maud-pulldown-cmark.svg?style=flat-square
 [cargo]: https://crates.io/crates/maud-pulldown-cmark
 [docs-badge]: https://img.shields.io/badge/API-docs-blue.svg?style=flat-square

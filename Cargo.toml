@@ -1,12 +1,12 @@
 [package]
 name = "maud-pulldown-cmark"
-version = "0.0.4"
+version = "0.0.5"
 authors = ["Wim Looman <wim@nemo157.com>"]
 description = "An adapter between maud and pulldown-cmark"
 
 documentation = "https://nemo157.com/maud-pulldown-cmark"
 homepage = "https://nemo157.com/maud-pulldown-cmark"
-repository = "https://github.com/Nemo157/maud-pulldown-cmark"
+repository = "https://git.nemo157.com/rust/maud-pulldown-cmark"
 
 readme = "README.md"
 keywords = ["maud", "markdown", "pulldown-cmark", "adapter"]
