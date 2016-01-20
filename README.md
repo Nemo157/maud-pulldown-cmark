@@ -16,7 +16,7 @@ let mut buffer = String::new();
 
 html!(buffer, {
   div {
-    $(Markdown::FromString(markdown))
+    $(markdown::from_string(markdown))
   }
 });
 
