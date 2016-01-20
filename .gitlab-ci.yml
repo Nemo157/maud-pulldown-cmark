@@ -51,6 +51,7 @@ mirror-to-github:
   allow_failure: true
   when: always
   script:
+    - apt-get install -y git
     - echo "machine github.com login $GITHUB_TOKEN password x-oauth-basic" >> ~/.netrc
     - chmod 0600 ~/.netrc
     - git push --mirror "https://github.com/$GITHUB_PROJECT"
