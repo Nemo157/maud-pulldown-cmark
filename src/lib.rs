@@ -7,8 +7,8 @@
 extern crate maud;
 extern crate pulldown_cmark;
 
-/// The public constructors for the adapters
-pub mod markdown;
-
 mod escape;
 mod render;
+mod markdown;
+
+pub use markdown::Markdown;
