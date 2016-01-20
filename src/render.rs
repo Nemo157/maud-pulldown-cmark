@@ -4,17 +4,21 @@ use std::collections::{ HashMap };
 use std::fmt::{ self, Write };
 
 use maud::{ self, Escaper };
-use pulldown_cmark::{ Parser, Event, Tag };
+use pulldown_cmark::{ Event, Tag };
 
 use escape::HrefEscaper;
-use markdown::Markdown;
+use markdown::{ MarkdownString, MarkdownEvents };
 
 
-impl<'a> maud::Render for Markdown<'a> {
+impl<'a> maud::Render for MarkdownString<'a> {
   fn render(&self, w: &mut Write) -> fmt::Result {
-    match self {
-      &Markdown::FromString(s) => render_events(Parser::new(s), w),
-    }
+    render_events(self.events(), w)
+  }
+}
+
+impl<'a, I: 'a + Iterator<Item=Event<'a>>, F: Fn() -> I> maud::Render for MarkdownEvents<'a, I, F> {
+  fn render(&self, w: &mut Write) -> fmt::Result {
+    render_events(self.events(), w)
   }
 }
 
