@@ -7,6 +7,7 @@ stages:
 
 test-stable:
   script:
+    - apt-get update
     - apt-get install -y curl file build-essential
     - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --disable-sudo
     - cargo build --release --verbose
@@ -14,6 +15,7 @@ test-stable:
 
 test-beta:
   script:
+    - apt-get update
     - apt-get install -y curl file build-essential
     - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --disable-sudo --channel=beta
     - cargo build --release --verbose
@@ -22,6 +24,7 @@ test-beta:
 test-nightly:
   allow_failure: true
   script:
+    - apt-get update
     - apt-get install -y curl file build-essential
     - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --disable-sudo --channel=nightly
     - cargo build --release --verbose --features nightly
@@ -32,6 +35,7 @@ publish:
   only:
     - tags
   script:
+    - apt-get update
     - apt-get install -y curl file build-essential
     - curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --disable-sudo
     - grep -v "maud_macros" Cargo.toml > Cargo.toml.new
@@ -51,6 +55,7 @@ mirror-to-github:
   allow_failure: true
   when: always
   script:
+    - apt-get update
     - apt-get install -y git
     - echo "machine github.com login $GITHUB_TOKEN password x-oauth-basic" >> ~/.netrc
     - chmod 0600 ~/.netrc
