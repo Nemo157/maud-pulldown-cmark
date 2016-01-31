@@ -1,6 +1,6 @@
 [package]
 name = "maud-pulldown-cmark"
-version = "0.0.5"
+version = "0.0.6"
 authors = ["Wim Looman <wim@nemo157.com>"]
 description = "An adapter between maud and pulldown-cmark"
 
