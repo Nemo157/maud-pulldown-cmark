@@ -91,7 +91,7 @@ fn render_start_tag<'a>(tag: Tag<'a>, context: &mut Context<'a>, mut w: &mut Wri
     Tag::Header(level) => render_header_start_tag(level as u8, w),
     Tag::CodeBlock(info) => render_code_block_start_tag(&*info, w),
     Tag::Image(src, _) => {
-      context.within_image = false;
+      context.within_image = true;
       render_image_start_tag(&*src, w)
     },
     Tag::Link(dest, title) => render_link_start_tag(&*dest, &*title, w),
