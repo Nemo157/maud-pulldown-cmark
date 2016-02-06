@@ -19,6 +19,6 @@ nightly = ["maud_macros"]
 
 [dependencies]
 pulldown-cmark = "0.0.5"
-maud = { git = "https://git.nemo157.com/forks/maud.git", rev = "consuming-render" }
+maud = { git = "https://git.nemo157.com/forks/maud.git", rev = "combined2" }
 # Should be a dev-dependency, but they're not supported with features
-maud_macros = { git = "https://git.nemo157.com/forks/maud.git", rev = "consuming-render", optional = true }
+maud_macros = { git = "https://git.nemo157.com/forks/maud.git", rev = "combined2", optional = true }
