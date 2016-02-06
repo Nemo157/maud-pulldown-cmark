@@ -28,7 +28,7 @@ use render;
 ///
 /// html!(buffer, {
 ///   div {
-///     $(Markdown::from_string(markdown))
+///     ^Markdown::from_string(markdown)
 ///   }
 /// }).unwrap();
 ///
@@ -62,7 +62,7 @@ use render;
 ///
 /// html!(buffer, {
 ///   div {
-///     $(Markdown::from_events(events))
+///     ^Markdown::from_events(events)
 ///   }
 /// }).unwrap();
 ///
