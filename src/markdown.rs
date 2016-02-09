@@ -69,6 +69,7 @@ use render;
 /// println!("{}", buffer);
 /// # }
 /// ```
+#[derive(Debug)]
 pub struct Markdown<'a, I: 'a + Iterator<Item=Event<'a>>> {
   events: I,
   phantom: PhantomData<&'a I>,

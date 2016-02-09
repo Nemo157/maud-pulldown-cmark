@@ -85,7 +85,7 @@ fn render_start_tag<'a>(tag: Tag<'a>, context: &mut Context<'a>, mut w: &mut Wri
   }
 }
 
-fn render_end_tag<'a>(tag: Tag<'a>, mut w: &mut Write) -> fmt::Result {
+fn render_end_tag(tag: Tag, mut w: &mut Write) -> fmt::Result {
   match tag {
     Tag::Rule => Ok(()),
     Tag::Code => w.write_str("</code>"),
