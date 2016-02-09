@@ -20,6 +20,5 @@ nightly = ["maud_macros", "clippy"]
 [dependencies]
 pulldown-cmark = "0.0.5"
 maud = { git = "https://github.com/lfairy/maud" }
-# Should be a dev-dependency, but they're not supported with features
-maud_macros = { git = "https://github.com/lfairy/maud", optional = true }
-clippy = { version = "*", optional = true }
+maud_macros = { git = "https://github.com/lfairy/maud", optional = true } # remove-for-crates.io
+clippy = { version = "*", optional = true } # remove-for-crates.io
