@@ -1,5 +1,7 @@
 //! This library implements an adapter to allow rendering strings as markdown inside a `maud`
 //! macro using `pulldown-cmark` efficiently.
+#![cfg_attr(feature="clippy", feature(plugin))]
+#![cfg_attr(feature="clippy", plugin(clippy))]
 
 #![warn(missing_copy_implementations)]
 #![warn(missing_debug_implementations)]
