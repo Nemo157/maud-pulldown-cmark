@@ -1,3 +1,5 @@
+use std::ascii::AsciiExt;
+use std::mem;
 use std::borrow::{ Cow };
 use std::collections::{ HashMap };
 use std::fmt::{ self, Write };
@@ -7,21 +9,39 @@ use pulldown_cmark::{ Event, Tag };
 
 use escape::HrefEscaper;
 
+pub struct Config {
+  pub header_ids: bool,
+}
+
 struct Context<'a> {
   numbers: HashMap<Cow<'a, str>, usize>,
   within_image: bool,
+  within_header: bool,
+  header_queue: Vec<Event<'a>>,
+  header_text: String,
+  config: Config,
 }
 
-pub fn render_events<'a, I: Iterator<Item=Event<'a>>>(events: I, mut w: &mut Write) -> fmt::Result {
+pub fn render_events<'a, I: Iterator<Item=Event<'a>>>(config: Config, events: I, mut w: &mut Write) -> fmt::Result {
   let mut context = Context {
     numbers: HashMap::new(),
     within_image: false,
+    within_header: false,
+    header_queue: Vec::new(),
+    header_text: String::new(),
+    config: config,
   };
+  render_events_internal(&mut context, events, w)
+}
+
+fn render_events_internal<'a, I: Iterator<Item=Event<'a>>>(context: &mut Context<'a>, events: I, mut w: &mut Write) -> fmt::Result {
   for event in events {
-    if context.within_image {
-      try!(render_event_within_image(event, &mut context, &mut w));
+    if context.within_header {
+      try!(render_event_within_header(event, context, &mut w));
+    } else if context.within_image {
+      try!(render_event_within_image(event, context, &mut w));
     } else {
-      try!(render_event(event, &mut context, &mut w));
+      try!(render_event(event, context, &mut w));
     }
   }
   Ok(())
@@ -55,6 +75,44 @@ fn render_event_within_image<'a>(event: Event<'a>, context: &mut Context<'a>, w:
   }
 }
 
+fn render_event_within_header<'a>(event: Event<'a>, context: &mut Context<'a>, w: &mut Write) -> fmt::Result {
+  match event {
+    Event::Start(Tag::Header(_)) => {
+      Err(fmt::Error)
+    },
+    Event::End(Tag::Header(level)) => {
+      context.within_header = false;
+      let id = mem::replace(&mut context.header_text, String::new());
+      let events = mem::replace(&mut context.header_queue, Vec::new());
+      try!(render_header_start_tag(level as u8, Some(id), w));
+      try!(render_events_internal(context, events.into_iter(), w));
+      render_header_end_tag(level as u8, w)
+    },
+    Event::Text(text) => {
+      // TODO: WHY RUST WHY?
+      // error: mismatched types:
+      //  expected `&str`,
+      //  found `[closure@src/render.rs:93:28: 93:72]`
+      // let t = text.replace(|c: char| c.is_whitespace() || !c.is_ascii(), "-");
+      let t: String = text.chars()
+        .map(|c| if c.is_whitespace() || !c.is_ascii() { '-' } else { c.to_ascii_lowercase() })
+        .collect();
+      context.header_text.push_str(&*t);
+      context.header_queue.push(Event::Text(text));
+      Ok(())
+    },
+    Event::SoftBreak | Event::HardBreak => {
+      context.header_text.push('-');
+      context.header_queue.push(event);
+      Ok(())
+    },
+    _ => {
+      context.header_queue.push(event);
+      Ok(())
+    },
+  }
+}
+
 fn render_start_tag<'a>(tag: Tag<'a>, context: &mut Context<'a>, mut w: &mut Write) -> fmt::Result {
   match tag {
     Tag::Rule => w.write_str("<hr />\n"),
@@ -74,7 +132,14 @@ fn render_start_tag<'a>(tag: Tag<'a>, context: &mut Context<'a>, mut w: &mut Wri
     Tag::List(Some(1)) => w.write_str("<ol>\n"),
     Tag::List(Some(start)) => write!(w, "<ol start=\"{}\">\n", start),
 
-    Tag::Header(level) => render_header_start_tag(level as u8, w),
+    Tag::Header(level) => {
+      if context.config.header_ids {
+        context.within_header = true;
+        Ok(())
+      } else {
+        render_header_start_tag(level as u8, None, w)
+      }
+    },
     Tag::CodeBlock(info) => render_code_block_start_tag(&*info, w),
     Tag::Image(src, _) => {
       context.within_image = true;
@@ -135,9 +200,14 @@ fn render_image_end_tag(title: &str, mut w: &mut Write) -> fmt::Result {
   w.write_str("\" />")
 }
 
-fn render_header_start_tag(level: u8, mut w: &mut Write) -> fmt::Result {
+fn render_header_start_tag(level: u8, id: Option<String>, mut w: &mut Write) -> fmt::Result {
   try!(w.write_str("<h"));
   try!(w.write_char((b'0' + level) as char));
+  if let Some(id) = id {
+    try!(w.write_str(" id=\""));
+    try!(w.write_str(&*id));
+    try!(w.write_char('"'));
+  }
   w.write_char('>')
 }
 
