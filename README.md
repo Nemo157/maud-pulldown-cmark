@@ -1,7 +1,15 @@
-# maud-pulldown-cmark [![release-badge][]][cargo] [![docs-badge][]][docs]
+# maud-pulldown-cmark [![downloads-badge][] ![release-badge][]][crate] [![license-badge][]](#license)
 
 This library implements an adapter to allow rendering strings as markdown inside
 a [maud][] macro using [pulldown-cmark][] efficiently.
+
+[downloads-badge]: https://img.shields.io/crates/d/maud-pulldown-cmark.svg?style=flat-square
+[release-badge]: https://img.shields.io/crates/v/maud-pulldown-cmark.svg?style=flat-square
+[license-badge]: https://img.shields.io/crates/l/maud-pulldown-cmark.svg?style=flat-square
+[crate]: https://crates.io/crates/maud-pulldown-cmark
+
+[maud]: https://github.com/lfairy/maud
+[pulldown-cmark]: https://github.com/google/pulldown-cmark
 
 ## Example
 
@@ -16,7 +24,7 @@ let mut buffer = String::new();
 
 html!(buffer, {
   div {
-    $(markdown::from_string(markdown))
+    $(Markdown::from_string(markdown))
   }
 });
 
@@ -61,10 +69,3 @@ at your option.
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you shall be dual licensed as above, without any
 additional terms or conditions.
-
-[release-badge]: https://img.shields.io/github/release/Nemo157/maud-pulldown-cmark.svg?style=flat-square
-[cargo]: https://crates.io/crates/maud-pulldown-cmark
-[docs-badge]: https://img.shields.io/badge/API-docs-blue.svg?style=flat-square
-[docs]: https://nemo157.com/maud-pulldown-cmark/
-[maud]: https://github.com/lfairy/maud
-[pulldown-cmark]: https://github.com/google/pulldown-cmark
