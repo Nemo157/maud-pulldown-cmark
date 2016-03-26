@@ -13,6 +13,8 @@ keywords = ["maud", "markdown", "pulldown-cmark", "adapter"]
 
 license = "MIT/Apache-2.0"
 
+build = "build.rs"
+
 [features]
 default = []
 nightly = ["maud_macros"]
@@ -21,4 +23,10 @@ nightly = ["maud_macros"]
 pulldown-cmark = "0.0.5"
 maud = "0.8.0"
 # Should be a dev-dependency, but they're not supported with features
-maud_macros = { git = "https://github.com/lfairy/maud", optional = true }
+maud_macros = { version = "0.8.0", optional = true }
+
+[build-dependencies]
+skeptic = "0.4"
+
+[dev-dependencies]
+skeptic = "0.4"
