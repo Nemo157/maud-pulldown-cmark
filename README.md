@@ -1,7 +1,7 @@
 # maud-pulldown-cmark [![downloads-badge][] ![release-badge][]][crate] [![license-badge][]](#license)
 
-This library implements an adapter to allow rendering strings as markdown inside
-a [maud][] macro using [pulldown-cmark][] efficiently.
+This library implements an adapter to allow rendering markdown strings inside a
+[maud][] macro using [pulldown-cmark][] efficiently.
 
 [downloads-badge]: https://img.shields.io/crates/d/maud-pulldown-cmark.svg?style=flat-square
 [release-badge]: https://img.shields.io/crates/v/maud-pulldown-cmark.svg?style=flat-square
@@ -14,45 +14,65 @@ a [maud][] macro using [pulldown-cmark][] efficiently.
 ## Example
 
 ```rust
-let markdown = "
- 1. A list
- 2. With some
- 3. Values
-";
+#![feature(plugin)]
+#![plugin(maud_macros)]
 
-let mut buffer = String::new();
+extern crate maud;
+extern crate maud_pulldown_cmark;
 
-html!(buffer, {
-  div {
-    $(Markdown::from_string(markdown))
-  }
-});
+use maud_pulldown_cmark::Markdown;
 
-println!("{}", buffer);
+fn main() {
+    let markdown = "
+1. A list
+2. With some
+3. Values";
+
+    let mut buffer = String::new();
+
+    html!(buffer, {
+        div {
+            ^(Markdown::from_string(markdown))
+        }
+    }).unwrap();
+
+    println!("{}", buffer);
+}
 ```
 
 ```rust
-let markdown = "
- 1. A list
- 2. With some
- 3. <span>Inline html</span>
-";
+#![feature(plugin)]
+#![plugin(maud_macros)]
 
-let events = || Parser::new(markdown).map(|ev| match ev {
-  // Escape inline html
-  Event::Html(html) | Event::InlineHtml(html) => Event::Text(html),
-  _ => ev,
-});
+extern crate maud;
+extern crate maud_pulldown_cmark;
+extern crate pulldown_cmark;
 
-let mut buffer = String::new();
+use maud_pulldown_cmark::Markdown;
+use pulldown_cmark::{Parser, Event};
 
-html!(buffer, {
-  div {
-    $(markdown::from_events(events))
-  }
-});
+fn main() {
+    let markdown = "
+1. A list
+2. With some
+3. <span>Inline html</span>";
 
-println!("{}", buffer);
+    let events = Parser::new(markdown).map(|ev| match ev {
+        // Escape inline html
+        Event::Html(html) | Event::InlineHtml(html) => Event::Text(html),
+        _ => ev,
+    });
+
+    let mut buffer = String::new();
+
+    html!(buffer, {
+        div {
+            ^(Markdown::from_events(events))
+        }
+    }).unwrap();
+
+    println!("{}", buffer);
+}
 ```
 
 ## License
