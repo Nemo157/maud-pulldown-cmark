@@ -18,7 +18,9 @@ env:
 
 before_script:
   - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
-  - sh -c 'if [ "$TRAVIS_RUST_VERSION" = "stable" ]; then grep -v "maud_macros" Cargo.toml > Cargo.toml.new && mv Cargo.toml.new Cargo.toml; fi'
+  # Cargo.toml should be a superset of Cargo.release.toml (mostly to ensure I bump version in both)
+  - sh -c 'while read f; do grep -Fxq "$f" Cargo.toml || exit 2 ; done < Cargo.release.toml'
+  - sh -c 'if [ "$TRAVIS_RUST_VERSION" = "stable" ]; then mv Cargo.release.toml Cargo.toml; fi'
 
 script:
   - travis-cargo build
