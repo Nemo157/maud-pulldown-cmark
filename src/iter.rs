@@ -58,8 +58,25 @@ impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> RootIter<'a, I> {
         Some(self.start_tag_to_events(tag)),
       Some(cmark::Event::End(tag)) =>
         Some(self.end_tag_to_events(tag)),
-      Some(_) =>
-        unimplemented!(),
+      Some(cmark::Event::Text(text)) =>
+        Some(events![text!(text)]),
+      Some(cmark::Event::Html(html)) | Some(cmark::Event::InlineHtml(html)) =>
+        Some(events![raw_html!(html)]),
+      Some(cmark::Event::SoftBreak) =>
+        Some(events![text!("\n")]),
+      Some(cmark::Event::HardBreak) =>
+        Some(events![closed_tag!("br")]),
+      Some(cmark::Event::FootnoteReference(name)) => {
+        let len = self.numbers.len();
+        let number = self.numbers.entry(name.clone()).or_insert(len);
+        Some(events![
+          start_tag!("sup", attrs!["class" => "footnote-reference"]),
+          start_tag!("a", attrs!["href" => name]),
+          text!(format!("{}", len)),
+          end_tag!("a"),
+          end_tag!("sup"),
+        ])
+      },
       None =>
         None,
     }
