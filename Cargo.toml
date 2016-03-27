@@ -24,11 +24,11 @@ pulldown-cmark = "0.0.5"
 maud = "0.8.0"
 # Should be a dev-dependency, but they're not supported with features
 maud_macros = { version = "0.8.0", optional = true }
-html-event = { path = "../html-event" }
+html-event = { git = "https://github.com/Nemo157/html-event" }
 
 [build-dependencies]
 skeptic = "0.4"
 
 [dev-dependencies]
 skeptic = "0.4"
-html-write = { path = "../html-write" }
+html-write = { git = "https://github.com/Nemo157/html-write" }
