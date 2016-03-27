@@ -56,3 +56,80 @@ impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> IntoIterator for Markdown<'a, 
     RootIter::new(self.events, self.config)
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::Markdown;
+  use html_write::Write;
+  use pulldown_cmark as cmark;
+
+  impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> Markdown<'a, I> {
+    pub fn render(self) -> String {
+      let mut buffer = String::new();
+      buffer.write_events(self.into_iter().map(|ev| ev.unwrap())).unwrap();
+      buffer
+    }
+  }
+
+  #[test]
+  pub fn test_from_string() {
+    let markdown = "
+ 1. A list
+ 2. With some
+ 3. <span>Inline html</span>
+    ";
+
+    let buffer = Markdown::from_string(markdown).render();
+    assert_eq!(buffer, "<ol>\n<li>A list</li>\n<li>With some</li>\n<li><span>Inline html</span></li>\n</ol>\n");
+  }
+
+  #[test]
+  pub fn test_from_events() {
+    let markdown = "
+ 1. A list
+ 2. With some
+ 3. <span>Inline html</span>
+    ";
+
+    let events = cmark::Parser::new(markdown).map(|ev| match ev {
+      // Escape inline html
+      cmark::Event::Html(html) | cmark::Event::InlineHtml(html) => cmark::Event::Text(html),
+      _ => ev,
+    });
+
+    let buffer = Markdown::from_events(events).render();
+    assert_eq!(buffer, "<ol>\n<li>A list</li>\n<li>With some</li>\n<li>&lt;span&gt;Inline html&lt;/span&gt;</li>\n</ol>\n");
+  }
+
+  #[test]
+  pub fn test_without_header_ids() {
+    let markdown = "
+# Header
+## A Sub Header
+    ";
+
+    let buffer = Markdown::from_string(markdown).render();
+    assert_eq!(buffer, "<h1>Header</h1>\n<h2>A Sub Header</h2>\n");
+  }
+
+  #[test]
+  pub fn test_with_header_ids() {
+    let markdown = "
+# Header
+## A Sub Header
+    ";
+
+    let buffer = Markdown::from_string(markdown).with_header_ids().render();
+    assert_eq!(buffer, "<h1 id=\"header\">Header</h1>\n<h2 id=\"a-sub-header\">A Sub Header</h2>\n");
+  }
+
+  #[test]
+  pub fn test_with_header_ids_and_linked_inline_image() {
+    let markdown = "
+# Header [![an image](http://example.com/image)](http://example.com)
+    ";
+
+    let buffer = Markdown::from_string(markdown).with_header_ids().render();
+    assert_eq!(buffer, "<h1 id=\"header-an-image\">Header <a href=\"http://example.com\"><img src=\"http://example.com/image\" alt=\"an image\" /></a></h1>\n");
+  }
+}

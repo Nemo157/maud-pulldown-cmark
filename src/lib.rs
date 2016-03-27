@@ -8,6 +8,9 @@
 extern crate html_event;
 extern crate pulldown_cmark;
 
+#[cfg(test)]
+extern crate html_write;
+
 mod escape;
 mod iter;
 mod markdown;

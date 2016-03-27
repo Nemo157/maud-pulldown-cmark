@@ -31,3 +31,4 @@ skeptic = "0.4"
 
 [dev-dependencies]
 skeptic = "0.4"
+html-write = { path = "../html-write" }
