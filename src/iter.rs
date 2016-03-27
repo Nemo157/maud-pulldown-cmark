@@ -1,7 +1,9 @@
+use std::ascii::AsciiExt;
 use std::borrow::Cow;
 use std::iter;
 use std::marker::PhantomData;
 use std::collections::HashMap;
+use std::vec;
 
 use pulldown_cmark as cmark;
 use html_event as html;
@@ -10,6 +12,7 @@ type Events<'a> = Box<Iterator<Item=Result<html::Event<'a>, ()>> + 'a>;
 
 static EMPTY_ATTRS: &'static [html::Attribute<'static>] = &[];
 
+#[derive(Clone)]
 pub struct Config {
   pub header_ids: bool,
 }
@@ -103,8 +106,7 @@ impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> RootIter<'a, I> {
       ],
       cmark::Tag::Header(level) => {
         if self.config.header_ids {
-          // TODO: config.header_ids support
-          unimplemented!()
+          Box::new(HeaderWithIdsIter::new(level, &mut self.events, &self.config)) as Events<'a>
         } else {
           events![start_tag!(format!("h{}", level))]
         }
@@ -214,7 +216,11 @@ impl<'a> ImageIter<'a> {
       event: Some(if err {
         Err(())
       } else {
-        Ok(closed_tag!("img", attrs!["src" => src, "title" => title, "alt" => alt]))
+        if title.is_empty() {
+          Ok(closed_tag!("img", attrs!["src" => src, "alt" => alt]))
+        } else {
+          Ok(closed_tag!("img", attrs!["src" => src, "title" => title, "alt" => alt]))
+        }
       }),
     }
   }
@@ -224,5 +230,73 @@ impl<'a> Iterator for ImageIter<'a> {
   type Item = Result<html::Event<'a>, ()>;
   fn next(&mut self) -> Option<Result<html::Event<'a>, ()>> {
     self.event.take()
+  }
+}
+
+struct HeaderWithIdsIter<'a> {
+  id: Option<String>,
+  err: bool,
+  level: i32,
+  started: bool,
+  inner: RootIter<'a, vec::IntoIter<cmark::Event<'a>>>,
+}
+
+impl<'a> HeaderWithIdsIter<'a> {
+  pub fn new(level: i32, events: &mut Iterator<Item=cmark::Event<'a>>, config: &Config) -> HeaderWithIdsIter<'a> {
+    let mut id = String::new();
+    let mut err = false;
+    let mut result = Vec::new();
+    for event in events {
+      match event {
+        cmark::Event::Start(cmark::Tag::Header(_)) => {
+          err = true;
+          break;
+        },
+        cmark::Event::End(cmark::Tag::Header(_)) => {
+          result.push(event);
+          break;
+        },
+        cmark::Event::Text(ref text) => {
+          let t: String = text.chars()
+            .map(|c| if c.is_whitespace() || !c.is_ascii() { '-' } else { c.to_ascii_lowercase() })
+            .collect();
+          id.push_str(&*t);
+        },
+        cmark::Event::SoftBreak | cmark::Event::HardBreak => {
+          id.push('-');
+        },
+        cmark::Event::Start(cmark::Tag::FootnoteDefinition(_)) => {
+          // TODO: support footnotes
+          err = true;
+          break;
+        },
+        cmark::Event::FootnoteReference(_) => {
+          // TODO: support footnotes
+          err = true;
+          break;
+        },
+        _ => (),
+      }
+      result.push(event);
+    }
+    HeaderWithIdsIter {
+      id: Some(id),
+      err: err,
+      level: level,
+      started: false,
+      inner: RootIter::new(result.into_iter(), config.clone()),
+    }
+  }
+}
+
+impl<'a> Iterator for HeaderWithIdsIter<'a> {
+  type Item = Result<html::Event<'a>, ()>;
+  fn next(&mut self) -> Option<Result<html::Event<'a>, ()>> {
+    if self.started {
+      self.inner.next()
+    } else {
+      self.started = true;
+      Some(Ok(start_tag!(format!("h{}", self.level), attrs!["id" => self.id.take().unwrap()])))
+    }
   }
 }
