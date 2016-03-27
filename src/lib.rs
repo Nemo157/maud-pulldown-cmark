@@ -4,11 +4,12 @@
 #![warn(missing_docs)]
 #![warn(variant_size_differences)]
 
-extern crate maud;
+#[macro_use]
+extern crate html_event;
 extern crate pulldown_cmark;
 
 mod escape;
-mod render;
+mod iter;
 mod markdown;
 
 pub use markdown::Markdown;

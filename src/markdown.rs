@@ -1,24 +1,23 @@
-use std::fmt;
 use std::marker::PhantomData;
 
-use maud::RenderOnce;
-use pulldown_cmark::{ Parser, Event };
+use pulldown_cmark as cmark;
+use html_event as html;
 
-use render;
+use iter::{ Config, RootIter };
 
 /// The adapter that allows rendering markdown inside a `maud` macro.
-pub struct Markdown<'a, I: 'a + Iterator<Item=Event<'a>>> {
+pub struct Markdown<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> {
   events: I,
-  config: render::Config,
+  config: Config,
   phantom: PhantomData<&'a I>,
 }
 
-impl<'a> Markdown<'a, Parser<'a>> {
+impl<'a> Markdown<'a, cmark::Parser<'a>> {
   /// To allow rendering from a string.
-  pub fn from_string(s: &'a str) -> Markdown<'a, Parser<'a>> {
+  pub fn from_string(s: &'a str) -> Markdown<'a, cmark::Parser<'a>> {
     Markdown {
-      events: Parser::new(s),
-      config: render::Config {
+      events: cmark::Parser::new(s),
+      config: Config {
         header_ids: false,
       },
       phantom: PhantomData,
@@ -26,12 +25,12 @@ impl<'a> Markdown<'a, Parser<'a>> {
   }
 }
 
-impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
+impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> Markdown<'a, I> {
   /// To allow rendering from a stream of events (useful for modifying the output of the general parser).
   pub fn from_events(events: I) -> Markdown<'a, I> {
     Markdown {
       events: events,
-      config: render::Config {
+      config: Config {
         header_ids: false,
       },
       phantom: PhantomData,
@@ -41,7 +40,7 @@ impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
   /// Generate ids for all headers, lowercases the text in the header and replaces spaces with -.
   pub fn with_header_ids(self) -> Markdown<'a, I> {
     Markdown {
-      config: render::Config {
+      config: Config {
         header_ids: true,
         ..self.config
       },
@@ -50,8 +49,10 @@ impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
   }
 }
 
-impl<'a, I: 'a + Iterator<Item=Event<'a>>> RenderOnce for Markdown<'a, I> {
-  fn render_once(self, w: &mut fmt::Write) -> fmt::Result {
-    render::render_events(self.config, self.events, w)
+impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> IntoIterator for Markdown<'a, I> {
+  type Item = Result<html::Event<'a>, ()>;
+  type IntoIter = RootIter<'a, I>;
+  fn into_iter(self) -> RootIter<'a, I> {
+    RootIter::new(self.events, self.config)
   }
 }
