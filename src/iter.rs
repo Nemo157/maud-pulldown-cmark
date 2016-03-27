@@ -75,7 +75,7 @@ impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> RootIter<'a, I> {
         Some(events![
           start_tag!("sup", attrs!["class" => "footnote-reference"]),
           start_tag!("a", attrs!["href" => name]),
-          text!(format!("{}", len)),
+          text!(format!("{}", number)),
           end_tag!("a"),
           end_tag!("sup"),
         ])
@@ -292,7 +292,9 @@ impl<'a> HeaderWithIdsIter<'a> {
 impl<'a> Iterator for HeaderWithIdsIter<'a> {
   type Item = Result<html::Event<'a>, ()>;
   fn next(&mut self) -> Option<Result<html::Event<'a>, ()>> {
-    if self.started {
+    if self.err {
+      Some(Err(()))
+    } else if self.started {
       self.inner.next()
     } else {
       self.started = true;
