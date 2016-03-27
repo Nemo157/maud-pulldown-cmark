@@ -10,8 +10,6 @@ use html_event as html;
 
 type Events<'a> = Box<Iterator<Item=Result<html::Event<'a>, ()>> + 'a>;
 
-static EMPTY_ATTRS: &'static [html::Attribute<'static>] = &[];
-
 #[derive(Clone)]
 pub struct Config {
   pub header_ids: bool,
