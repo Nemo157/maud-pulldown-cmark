@@ -60,7 +60,7 @@ impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> IntoIterator for Markdown<'a, 
 #[cfg(test)]
 mod tests {
   use super::Markdown;
-  use html_write::Write;
+  use html_event::Write;
   use pulldown_cmark as cmark;
 
   impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> Markdown<'a, I> {
