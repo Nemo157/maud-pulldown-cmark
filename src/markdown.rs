@@ -59,15 +59,13 @@ impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> IntoIterator for Markdown<'a, 
 
 #[cfg(test)]
 mod tests {
+  use std::fmt::Write;
   use super::Markdown;
-  use html_event::Write;
   use pulldown_cmark as cmark;
 
   impl<'a, I: 'a + Iterator<Item=cmark::Event<'a>>> Markdown<'a, I> {
     pub fn render(self) -> String {
-      let mut buffer = String::new();
-      buffer.write_events(self.into_iter().map(|ev| ev.unwrap())).unwrap();
-      buffer
+      self.into_iter().fold(String::new(), |mut result, event| { write!(result, "{}", event.unwrap()).unwrap(); result })
     }
   }
 
