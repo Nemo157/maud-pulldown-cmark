@@ -19,14 +19,15 @@ before_script:
   - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
   # Cargo.toml should be a superset of Cargo.release.toml (mostly to ensure I bump version in both)
   - sh -c 'while read f; do if ! grep -Fxq "$f" Cargo.toml; then echo "Expected line '"'"'$f'"'"' from Cargo.release.toml to exist in Cargo.toml"; exit 2; fi; done < Cargo.release.toml'
-  - sh -c 'if [ "$TRAVIS_RUST_VERSION" = "stable" ]; then mv Cargo.release.toml Cargo.toml; fi'
+  # Need to touch the release file otherwise `cargo package` complains about the file being missing
+  - sh -c 'if [ "$TRAVIS_RUST_VERSION" = "stable" ]; then mv Cargo.release.toml Cargo.toml; touch Cargo.release.toml; fi'
 
 script:
   - travis-cargo build
   - travis-cargo test
 
 before_deploy:
-  - cargo package
+  - travis-cargo package
 
 deploy:
   provider: script
