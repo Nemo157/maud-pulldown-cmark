@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Markdown","The adapter that allows rendering markdown inside a `maud` macro."]]});
