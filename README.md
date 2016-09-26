@@ -28,15 +28,13 @@ fn main() {
 2. With some
 3. Values";
 
-    let mut buffer = String::new();
-
-    html!(buffer, {
+    let buffer = html! {
         div {
-            ^(Markdown::from_string(markdown))
+            (Markdown::from_string(markdown))
         }
-    }).unwrap();
+    };
 
-    println!("{}", buffer);
+    println!("{}", buffer.into_string());
 }
 ```
 
@@ -63,15 +61,13 @@ fn main() {
         _ => ev,
     });
 
-    let mut buffer = String::new();
-
-    html!(buffer, {
+    let buffer = html! {
         div {
-            ^(Markdown::from_events(events))
+            (Markdown::from_events(events))
         }
-    }).unwrap();
+    };
 
-    println!("{}", buffer);
+    println!("{}", buffer.into_string());
 }
 ```
 
