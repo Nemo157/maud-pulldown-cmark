@@ -13,7 +13,7 @@ This library implements an adapter to allow rendering markdown strings inside a
 
 ## Example
 
-```rust
+```ignore
 #![feature(plugin)]
 #![plugin(maud_macros)]
 
@@ -38,7 +38,7 @@ fn main() {
 }
 ```
 
-```rust
+```ignore
 #![feature(plugin)]
 #![plugin(maud_macros)]
 
@@ -61,11 +61,11 @@ fn main() {
         _ => ev,
     });
 
-    let buffer = html! {
+    let buffer = html!(
         div {
             (Markdown::from_events(events))
         }
-    };
+    );
 
     println!("{}", buffer.into_string());
 }
