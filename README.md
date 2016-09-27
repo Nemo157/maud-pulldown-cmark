@@ -3,6 +3,9 @@
 This library implements an adapter to allow rendering markdown strings inside a
 [maud][] macro using [pulldown-cmark][] efficiently.
 
+This library requires nightly rust to run the tests as they use the
+`maud_macros` plugin.
+
 [downloads-badge]: https://img.shields.io/crates/d/maud-pulldown-cmark.svg?style=flat-square
 [release-badge]: https://img.shields.io/crates/v/maud-pulldown-cmark.svg?style=flat-square
 [license-badge]: https://img.shields.io/crates/l/maud-pulldown-cmark.svg?style=flat-square
@@ -28,15 +31,13 @@ fn main() {
 2. With some
 3. Values";
 
-    let mut buffer = String::new();
-
-    html!(buffer, {
+    let buffer = html! {
         div {
-            ^(Markdown::from_string(markdown))
+            (Markdown::from_string(markdown))
         }
-    }).unwrap();
+    };
 
-    println!("{}", buffer);
+    println!("{}", buffer.into_string());
 }
 ```
 
@@ -63,15 +64,13 @@ fn main() {
         _ => ev,
     });
 
-    let mut buffer = String::new();
-
-    html!(buffer, {
+    let buffer = html!(
         div {
-            ^(Markdown::from_events(events))
+            (Markdown::from_events(events))
         }
-    }).unwrap();
+    );
 
-    println!("{}", buffer);
+    println!("{}", buffer.into_string());
 }
 ```
 

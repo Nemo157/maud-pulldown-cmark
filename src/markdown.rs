@@ -10,8 +10,7 @@ use render;
 ///
 /// # Examples
 ///
-#[cfg_attr(feature = "nightly", doc = " ```")]
-#[cfg_attr(not(feature = "nightly"), doc = " ```ignore")]
+/// ```
 /// # #![feature(plugin)]
 /// # #![plugin(maud_macros)]
 /// # extern crate maud;
@@ -24,20 +23,17 @@ use render;
 ///  3. <span>Inline html</span>
 /// ";
 ///
-/// let mut buffer = String::new();
-///
-/// html!(buffer, {
+/// let buffer = html! {
 ///   div {
-///     ^Markdown::from_string(markdown)
+///     (Markdown::from_string(markdown))
 ///   }
-/// }).unwrap();
+/// };
 ///
-/// println!("{}", buffer);
+/// println!("{}", buffer.into_string());
 /// # }
 /// ```
 ///
-#[cfg_attr(feature = "nightly", doc = " ```")]
-#[cfg_attr(not(feature = "nightly"), doc = " ```ignore")]
+/// ```
 /// # #![feature(plugin)]
 /// # #![plugin(maud_macros)]
 /// # extern crate maud;
@@ -58,15 +54,13 @@ use render;
 ///   _ => ev,
 /// });
 ///
-/// let mut buffer = String::new();
-///
-/// html!(buffer, {
+/// let buffer = html! {
 ///   div {
-///     ^Markdown::from_events(events)
+///     (Markdown::from_events(events))
 ///   }
-/// }).unwrap();
+/// };
 ///
-/// println!("{}", buffer);
+/// println!("{}", buffer.into_string());
 /// # }
 /// ```
 pub struct Markdown<'a, I: 'a + Iterator<Item=Event<'a>>> {
@@ -104,8 +98,7 @@ impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
   ///
   /// # Examples
   ///
-  #[cfg_attr(feature = "nightly", doc = " ```")]
-  #[cfg_attr(not(feature = "nightly"), doc = " ```ignore")]
+  /// ```
   /// # #![feature(plugin)]
   /// # #![plugin(maud_macros)]
   /// # extern crate maud;
@@ -117,13 +110,11 @@ impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
   /// ## A Sub Header
   /// ";
   ///
-  /// let mut buffer = String::new();
+  /// let buffer = html!(
+  ///   (Markdown::from_string(markdown).with_header_ids())
+  /// );
   ///
-  /// html!(buffer, {
-  ///   ^Markdown::from_string(markdown).with_header_ids()
-  /// }).unwrap();
-  ///
-  /// assert_eq!(buffer, "<h1 id=\"header\">Header</h1>\n<h2 id=\"a-sub-header\">A Sub Header</h2>\n");
+  /// assert_eq!(buffer.into_string(), "<h1 id=\"header\">Header</h1>\n<h2 id=\"a-sub-header\">A Sub Header</h2>\n");
   /// # }
   /// ```
   pub fn with_header_ids(self) -> Markdown<'a, I> {
