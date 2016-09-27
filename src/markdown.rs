@@ -110,9 +110,9 @@ impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
   /// ## A Sub Header
   /// ";
   ///
-  /// let buffer = html! {
+  /// let buffer = html!(
   ///   (Markdown::from_string(markdown).with_header_ids())
-  /// }:
+  /// );
   ///
   /// assert_eq!(buffer.into_string(), "<h1 id=\"header\">Header</h1>\n<h2 id=\"a-sub-header\">A Sub Header</h2>\n");
   /// # }
