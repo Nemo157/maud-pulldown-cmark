@@ -7,15 +7,12 @@ env:
   global:
     - secure: WlDgdRVPBOvMoFq+wWzpZCu8n6DbmVmo3ssqOAAjYoXX9+mOtD5Y+QjrWWrIeMcJkWlRfS4Elai8q/422MkQabpiAofcRUe/ph6udxTau1A7Y2HXv4yYRj4skXWdxkZpULL5SssIHQeI3Uc0UyUyF0ugQX6dnkLMwqb+vVtR17BDF5MSqxhJMeahsNrpSokzRmJGT2oTsA3i2htB/XZRvmrAm+Gq1jblf/uDfxiowY47IrDzi34L9pST11Ct/tnjgSKPsx44k4DZ0TYekW9N4lmvkEpmFjB62/f5EGvX0NlqQbBTcAGbdQRlB24pPkoMW/zhf37cnhPPPSOLwygPbrPqpzife6nxYDDqPPPN7JOSozcesld4fQnS0GIU9FwTGaRw+Z+10OcPG6ev/oriJvDgeVKdSNmmGho5IzONE1sS23vnlDcEUWdr1ZUw6TaejEWrbT8N3TPGvU9n6+QG8XwW1un2DIaGWzUyklePy9EX0BvNKPXkUOJntiao6KvbkmBbuCHF5Y2ou0yGW7vcfnNp2CiiQM8syX3V+L33emQ7PmsQLK9+Fgn2I32+qxRK4ZSh5zWGqN67AgOKHnYRR+m8BIPaKis47NhvyiL0ZlHP7NRINKIBPqQZlrdiokwICn897D6BuZ1ygEwf/d+U/EyVOcMaebTTCpvPhTPTngM=
 
-before_script:
-  - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
-
 script:
-  - travis-cargo build
-  - travis-cargo test
+  - cargo build
+  - cargo test
 
 before_deploy:
-  - travis-cargo package
+  - cargo package
 
 deploy:
   provider: script
