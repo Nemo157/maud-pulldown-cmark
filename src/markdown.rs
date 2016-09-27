@@ -10,8 +10,7 @@ use render;
 ///
 /// # Examples
 ///
-#[cfg_attr(feature = "nightly", doc = " ```")]
-#[cfg_attr(not(feature = "nightly"), doc = " ```ignore")]
+/// ```
 /// # #![feature(plugin)]
 /// # #![plugin(maud_macros)]
 /// # extern crate maud;
@@ -34,8 +33,7 @@ use render;
 /// # }
 /// ```
 ///
-#[cfg_attr(feature = "nightly", doc = " ```")]
-#[cfg_attr(not(feature = "nightly"), doc = " ```ignore")]
+/// ```
 /// # #![feature(plugin)]
 /// # #![plugin(maud_macros)]
 /// # extern crate maud;
@@ -100,8 +98,7 @@ impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
   ///
   /// # Examples
   ///
-  #[cfg_attr(feature = "nightly", doc = " ```")]
-  #[cfg_attr(not(feature = "nightly"), doc = " ```ignore")]
+  /// ```
   /// # #![feature(plugin)]
   /// # #![plugin(maud_macros)]
   /// # extern crate maud;

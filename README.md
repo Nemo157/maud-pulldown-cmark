@@ -3,6 +3,9 @@
 This library implements an adapter to allow rendering markdown strings inside a
 [maud][] macro using [pulldown-cmark][] efficiently.
 
+This library requires nightly rust to run the tests as they use the
+`maud_macros` plugin.
+
 [downloads-badge]: https://img.shields.io/crates/d/maud-pulldown-cmark.svg?style=flat-square
 [release-badge]: https://img.shields.io/crates/v/maud-pulldown-cmark.svg?style=flat-square
 [license-badge]: https://img.shields.io/crates/l/maud-pulldown-cmark.svg?style=flat-square
@@ -13,7 +16,7 @@ This library implements an adapter to allow rendering markdown strings inside a
 
 ## Example
 
-```ignore
+```rust
 #![feature(plugin)]
 #![plugin(maud_macros)]
 
@@ -38,7 +41,7 @@ fn main() {
 }
 ```
 
-```ignore
+```rust
 #![feature(plugin)]
 #![plugin(maud_macros)]
 
