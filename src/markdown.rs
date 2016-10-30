@@ -1,4 +1,3 @@
-use std::fmt;
 use std::marker::PhantomData;
 
 use maud::RenderOnce;
@@ -129,8 +128,8 @@ impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
 }
 
 impl<'a, I: 'a + Iterator<Item=Event<'a>>> RenderOnce for Markdown<'a, I> {
-  fn render_once(self, w: &mut fmt::Write) -> fmt::Result {
-    render::render_events(self.config, self.events, w)
+  fn render_once_to(self, w: &mut String) {
+    render::render_events(self.config, self.events, w);
   }
 }
 
@@ -143,7 +142,7 @@ mod tests {
   impl<'a, I: 'a + Iterator<Item=Event<'a>>> Markdown<'a, I> {
     pub fn render(self) -> String {
       let mut buffer = String::new();
-      self.render_once(&mut buffer).unwrap();
+      self.render_once_to(&mut buffer);
       buffer
     }
   }
