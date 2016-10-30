@@ -60,14 +60,14 @@ fn render_event<'a>(event: Event<'a>, context: &mut Context<'a>, w: &mut String)
 
 fn render_event_within_image<'a>(event: Event<'a>, context: &mut Context<'a>, w: &mut String) {
   match event {
-    Event::Start(_) => unreachable!(),
+    Event::Start(_) => (),
     Event::End(Tag::Image(_, title)) => {
       context.within_image = false;
       render_image_end_tag(&*title, w);
     },
-    Event::End(_) => unreachable!(),
+    Event::End(_) => (),
     Event::Text(text) => Escaper::new(w).write_str(&*text).unwrap(),
-    Event::Html(_) => unreachable!(),
+    Event::Html(_) => (),
     Event::InlineHtml(html) => Escaper::new(w).write_str(&*html).unwrap(),
     Event::SoftBreak | Event::HardBreak => w.push(' '),
     Event::FootnoteReference(name) => render_footnote_reference_within_image(name, &mut context.numbers, w),
@@ -76,9 +76,7 @@ fn render_event_within_image<'a>(event: Event<'a>, context: &mut Context<'a>, w:
 
 fn render_event_within_header<'a>(event: Event<'a>, context: &mut Context<'a>, w: &mut String) {
   match event {
-    Event::Start(Tag::Header(_)) => {
-      unreachable!();
-    },
+    Event::Start(Tag::Header(_)) => { },
     Event::End(Tag::Header(level)) => {
       context.within_header = false;
       let id = mem::replace(&mut context.header_text, String::new());
@@ -165,7 +163,7 @@ fn render_end_tag<'a>(tag: Tag<'a>, mut w: &mut String) {
 
     Tag::Header(level) => render_header_end_tag(level as u8, w),
     Tag::CodeBlock(_) => w.push_str("</code></pre>\n"),
-    Tag::Image(_, _) => unreachable!(),
+    Tag::Image(_, _) => (),
     Tag::Link(_, _) => w.push_str("</a>"),
     Tag::FootnoteDefinition(_) => w.push_str("</div>\n"),
   }
